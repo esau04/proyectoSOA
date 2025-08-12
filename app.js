@@ -2,12 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/db');
 const productosRoutes = require('./routes/productos');
+const ventasRoutes = require('./routes/ventas');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/productos', productosRoutes);
+app.use('/api/ventas', ventasRoutes);
 
 sequelize.sync().then(() => {
   console.log('DB conectada y modelos sincronizados');
