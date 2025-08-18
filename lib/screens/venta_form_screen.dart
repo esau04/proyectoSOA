@@ -8,9 +8,10 @@ class VentaFormScreen extends StatefulWidget {
   final String nombreVendedor;
 
   const VentaFormScreen({
+    Key? key,
     required this.idVendedor,
     required this.nombreVendedor,
-  });
+  }) : super(key: key);
 
   @override
   _VentaFormScreenState createState() => _VentaFormScreenState();
@@ -20,7 +21,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final ProductoService _productoService = ProductoService();
   final VentaService _ventaService = VentaService();
-  
+
   late Future<List<Producto>> _futureProductos;
   Producto? _productoSeleccionado;
   final TextEditingController _cantidadController = TextEditingController();
@@ -29,13 +30,24 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
   void initState() {
     super.initState();
     _futureProductos = _productoService.getProductos();
+    _cantidadController.addListener(_actualizarTotal);
+  }
+
+  void _actualizarTotal() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final total = _productoSeleccionado != null && _cantidadController.text.isNotEmpty
+        ? _productoSeleccionado!.precioVenta * (int.tryParse(_cantidadController.text) ?? 0)
+        : 0.0;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registrar Nueva Venta'),
+        title: const Text('Registrar Nueva Venta'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -47,14 +59,14 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                 future: _futureProductos,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Text('No hay productos disponibles');
+                    return const Text('No hay productos disponibles');
                   } else {
                     return DropdownButtonFormField<Producto>(
-                      decoration: InputDecoration(labelText: 'Producto'),
+                      decoration: const InputDecoration(labelText: 'Producto'),
                       items: snapshot.data!
                           .where((p) => p.active && p.stock > 0)
                           .map((Producto producto) {
@@ -78,10 +90,10 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                   }
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _cantidadController,
-                decoration: InputDecoration(labelText: 'Cantidad'),
+                decoration: const InputDecoration(labelText: 'Cantidad'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -98,18 +110,18 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                 },
               ),
               if (_productoSeleccionado != null) ...[
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Precio Unitario: \$${_productoSeleccionado!.precioVenta.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  'Total: \$${(_productoSeleccionado!.precioVenta * (_cantidadController.text.isEmpty ? 0 : int.tryParse(_cantidadController.text) ?? 0).toStringAsFixed(2)}',
+                  'Total: \$${total.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ],
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate() && _productoSeleccionado != null) {
@@ -122,19 +134,19 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                         idVendedor: widget.idVendedor,
                         nombreVendedor: widget.nombreVendedor,
                       );
-                      
+
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Venta registrada exitosamente')),
+                        const SnackBar(content: Text('Venta registrada exitosamente')),
                       );
                       Navigator.pop(context);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $e')),
+                        SnackBar(content: Text('Error: ${e.toString()}')),
                       );
                     }
                   }
                 },
-                child: Text('Registrar Venta'),
+                child: const Text('Registrar Venta'),
               ),
             ],
           ),
@@ -145,6 +157,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
 
   @override
   void dispose() {
+    _cantidadController.removeListener(_actualizarTotal);
     _cantidadController.dispose();
     super.dispose();
   }

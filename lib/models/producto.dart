@@ -19,23 +19,23 @@ class Producto {
 
   factory Producto.fromJson(Map<String, dynamic> json) {
     return Producto(
-      idProducto: json['idProducto'],
+      idProducto: json['id_producto'] ?? json['idProducto'],
       nombre: json['nombre'],
       descripcion: json['descripcion'],
-      precioCompra: json['precioCompra'].toDouble(),
-      precioVenta: json['precioVenta'].toDouble(),
+      precioCompra: (json['precio_compra'] ?? json['precioCompra']).toDouble(),
+      precioVenta: (json['precio_venta'] ?? json['precioVenta']).toDouble(),
       stock: json['stock'],
-      active: json['active'],
+      active: json['active'] ?? true,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idProducto': idProducto,
+      'id_producto': idProducto,
       'nombre': nombre,
       'descripcion': descripcion,
-      'precioCompra': precioCompra,
-      'precioVenta': precioVenta,
+      'precio_compra': precioCompra,
+      'precio_venta': precioVenta,
       'stock': stock,
       'active': active,
     };

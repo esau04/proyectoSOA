@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:soa_app/screens/ventas/venta_form_screen.dart';
-import 'package:soa_app/screens/ventas/historial_ventas_screen.dart';
-import 'package:soa_app/screens/ventas/cancelar_venta_screen.dart';
+import 'package:soa_app/screens/venta_form_screen.dart';
+import 'package:soa_app/screens/historial_ventas_screen.dart';
+import 'package:soa_app/screens/cancelar_venta_screen.dart';
 
 class VentasScreen extends StatelessWidget {
   final String rolUsuario;

@@ -1,33 +1,26 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Producto = require('./Producto');
 
-const Venta = sequelize.define('Venta', {
-  idVenta: {
+const Venta = sequelize.define('venta', {
+  id_venta: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
+    field: 'id_venta'
   },
   cantidad: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      min: 1
-    }
+    allowNull: false
   },
-  precioUnitario: {
+  precio_unitario: {
     type: DataTypes.FLOAT,
     allowNull: false,
-    validate: {
-      min: 0
-    }
+    field: 'precio_unitario'
   },
-  precioTotal: {
+  precio_total: {
     type: DataTypes.FLOAT,
     allowNull: false,
-    validate: {
-      min: 0
-    }
+    field: 'precio_total'
   },
   fecha: {
     type: DataTypes.DATE,
@@ -37,34 +30,27 @@ const Venta = sequelize.define('Venta', {
     type: DataTypes.ENUM('completada', 'cancelada', 'devuelta'),
     defaultValue: 'completada'
   },
-  canceladoPor: {
-    type: DataTypes.INTEGER // ID del supervisor
+  cancelado_por: {
+    type: DataTypes.INTEGER
   },
-  fechaCancelacion: {
+  fecha_cancelacion: {
     type: DataTypes.DATE
   },
-  motivoCancelacion: {
+  motivo_cancelacion: {
     type: DataTypes.STRING
+  },
+  producto_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'productos', // Nombre de la tabla (no del modelo)
+      key: 'id_producto'
+    }
   }
+}, {
+  tableName: 'ventas',
+  timestamps: true,
+  underscored: true
 });
 
-// Relación con Producto
-Venta.belongsTo(Producto, { foreignKey: 'ProductoId' });
-Producto.hasMany(Venta, { foreignKey: 'ProductoId' });
-
-// Hooks para actualizar stock
-Venta.addHook('afterCreate', async (venta, options) => {
-  const producto = await Producto.findByPk(venta.ProductoId);
-  producto.stock -= venta.cantidad;
-  await producto.save();
-});
-
-Venta.addHook('afterUpdate', async (venta, options) => {
-  if (venta.changed('estado') && (venta.estado === 'cancelada' || venta.estado === 'devuelta')) {
-    const producto = await Producto.findByPk(venta.ProductoId);
-    producto.stock += venta.cantidad;
-    await producto.save();
-  }
-});
-
+// No establecer relaciones aquí - se hará en app.js
 module.exports = Venta;

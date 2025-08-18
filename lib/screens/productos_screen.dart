@@ -3,7 +3,7 @@ import 'package:soa_app/models/producto.dart';
 import 'package:soa_app/services/producto_service.dart';
 import 'package:soa_app/screens/producto_form_screen.dart';
 import 'package:soa_app/widgets/product_card.dart';
-import 'package:soa_app/screens/ventas/ventas_screen.dart'; // Importación añadida
+import 'package:soa_app/screens/ventas_screen.dart'; // Importación añadida
 
 class ProductosScreen extends StatefulWidget {
   @override

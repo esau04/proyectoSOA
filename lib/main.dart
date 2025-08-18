@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soa_app/screens/productos_screen.dart';
-import 'package:soa_app/screens/ventas/ventas_screen.dart';
+import 'package:soa_app/screens/ventas_screen.dart';
 
 void main() {
   runApp(MyApp());

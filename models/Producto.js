@@ -1,28 +1,31 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Producto = sequelize.define('Producto', {
-  idProducto: {
+const Producto = sequelize.define('producto', {
+  id_producto: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
+    field: 'id_producto'
   },
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
-  }, 
+  },
   descripcion: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  precioCompra: {
+  precio_compra: {
     type: DataTypes.FLOAT,
-    allowNull: false
+    allowNull: false,
+    field: 'precio_compra'
   },
-  precioVenta: {
+  precio_venta: {
     type: DataTypes.FLOAT,
-    allowNull: false
+    allowNull: false,
+    field: 'precio_venta'
   },
   stock: {
     type: DataTypes.INTEGER,
@@ -32,6 +35,10 @@ const Producto = sequelize.define('Producto', {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   }
+}, {
+  tableName: 'productos',
+  timestamps: true,
+  underscored: true
 });
 
 module.exports = Producto;
